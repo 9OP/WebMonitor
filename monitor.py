@@ -1,6 +1,6 @@
 from scheduler import Scheduler
 from database import Database
-from monitor_utils import _monitor_website, _monitor_dump, _monitor_collect
+from monitor_utils import _monitor_website, _monitor_dump, _monitor_collect, _metrics_print
 
 
 
@@ -64,7 +64,7 @@ class MonitorConsumer:
         :param website: website http addresse
         '''
         metrics = _monitor_collect(interval, website)
-        print('interval:', interval, 'metrics:', metrics)
+        _metrics_print(website, interval, metrics)
 
     def start_consuming(self):
         ''' Start consuming process...
@@ -89,7 +89,7 @@ class MonitorConsumer:
 
 
 
-class MonitoringMaster:
+class MonitorMaster:
     def __init__(self, delay, websites):
         self._producer = MonitorProducer(delay, websites)
         self._consumer = MonitorConsumer(websites)

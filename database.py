@@ -84,45 +84,41 @@ class Database:
         ''' Collect compute and return metrics for the
             look back until now interval
         :param date: date from which start to compute metrics
-        :return metrics
+        :return metrics dict
 
         ex: date format: YYYY-MM-DD HH:MM:SS
         '''
-        # self._cursor.execute('''
-        #     SELECT date FROM Monitor WHERE date >= (?) AND website = (?)
-        # ''', (date, website))
-
         metrics = {}
 
         # Rate of availability
         self._cursor.execute('''
             SELECT AVG(available) FROM Monitor WHERE date >= (?) AND website = (?)
         ''', (date, website))
-        metrics['availability_rate'] = self._cursor.fetchall()[0]
+        metrics['availability_rate'] = self._cursor.fetchall()[0][0]
 
         # Avg response_time
         self._cursor.execute('''
             SELECT AVG(response_time) FROM Monitor WHERE date >= (?) AND website = (?)
         ''', (date, website))
-        metrics['avg_response_time'] = self._cursor.fetchall()[0]
+        metrics['avg_response_time'] = self._cursor.fetchall()[0][0]
 
         # Max response_time
         self._cursor.execute('''
             SELECT MAX(response_time) FROM Monitor WHERE date >= (?) AND website = (?)
         ''', (date, website))
-        metrics['max_response_time'] = self._cursor.fetchall()[0]
+        metrics['max_response_time'] = self._cursor.fetchall()[0][0]
 
         # Avg size
         self._cursor.execute('''
             SELECT AVG(size) FROM Monitor WHERE date >= (?) AND website = (?)
         ''', (date, website))
-        metrics['average_size'] = self._cursor.fetchall()[0]
+        metrics['average_size'] = self._cursor.fetchall()[0][0]
 
         # Max size
         self._cursor.execute('''
             SELECT MAX(size) FROM Monitor WHERE date >= (?) AND website = (?)
         ''', (date, website))
-        metrics['max_size'] = self._cursor.fetchall()[0]
+        metrics['max_size'] = self._cursor.fetchall()[0][0]
 
         # Most occuring status_code
         self._cursor.execute('''
@@ -131,7 +127,7 @@ class Database:
             ORDER BY occ DESC
             LIMIT 1
         ''', (date, website))
-        metrics['most_occuring_status_code'] = self._cursor.fetchall()[0]
+        metrics['most_occuring_status_code'] = self._cursor.fetchall()[0][0]
 
         # Most occuring content type
         self._cursor.execute('''
@@ -140,6 +136,6 @@ class Database:
             ORDER BY occ DESC
             LIMIT 1
         ''', (date, website))
-        metrics['most_occuring_content_type'] = self._cursor.fetchall()[0]
+        metrics['most_occuring_content_type'] = self._cursor.fetchall()[0][0]
 
         return metrics

@@ -12,12 +12,10 @@ def chrono():
     while chrono_running:
         sys.stdout.write(strftime('%M:%S'))
         sys.stdout.flush()
-        sys.stdout.write("\b" * (100)) # return to start of line, after '['
+        sys.stdout.write("\b" * (100))
 
-        # print(time.time().strftime('%M:%S'))
-
-thread = threading.Thread(target=chrono)
-thread.start()
+# thread = threading.Thread(target=chrono)
+# thread.start()
 
 
 # mon = MonitorProducer(delay=5, websites=get_websites('conf.txt'))
@@ -33,7 +31,7 @@ thread.start()
 # print('stop')
 # mon.stop_producing()
 
-mon = MonitorMaster(delay=5, websites=get_websites('conf.txt'))
+mon = MonitorMaster(delay=5, websites=get_websites('websites.txt'))
 mon.start_monitoring()
 print('start')
 time.sleep(100)
@@ -46,5 +44,5 @@ time.sleep(10)
 print('final stop')
 mon.stop_monitoring()
 
-chrono_running = False
-thread.join()
+# chrono_running = False
+# thread.join()
