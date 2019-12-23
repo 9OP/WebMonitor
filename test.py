@@ -1,4 +1,4 @@
-from monitor import MonitorProducer
+from monitor import MonitorMaster
 from monitor_utils import get_websites
 from time import strftime
 import sys
@@ -20,17 +20,30 @@ thread = threading.Thread(target=chrono)
 thread.start()
 
 
-mon = MonitorProducer(delay=5, websites=get_websites('conf.txt'))
+# mon = MonitorProducer(delay=5, websites=get_websites('conf.txt'))
+# mon.start_producing()
+# print('start')
+# time.sleep(20)
+# mon.stop_producing()
+# print('stop')
+# time.sleep(5)
+# print('start again')
+# mon.start_producing()
+# time.sleep(10)
+# print('stop')
+# mon.stop_producing()
+
+mon = MonitorMaster(delay=5, websites=get_websites('conf.txt'))
 mon.start_monitoring()
 print('start')
-time.sleep(20)
-mon.stop_monitoring()
+time.sleep(100)
 print('stop')
-time.sleep(5)
+mon.stop_monitoring()
+time.sleep(30)
 print('start again')
 mon.start_monitoring()
 time.sleep(10)
-print('stop')
+print('final stop')
 mon.stop_monitoring()
 
 chrono_running = False
