@@ -1,12 +1,15 @@
-from monitor import Monitor
+from monitor import MonitorProducer
 from monitor_utils import get_websites
 from time import strftime
 import sys
 import time
 import threading
 
+chrono_running = True
+
 def chrono():
-    while True:
+    global chrono_running
+    while chrono_running:
         sys.stdout.write(strftime('%M:%S'))
         sys.stdout.flush()
         sys.stdout.write("\b" * (100)) # return to start of line, after '['
@@ -17,7 +20,7 @@ thread = threading.Thread(target=chrono)
 thread.start()
 
 
-mon = Monitor(delay=5, websites=get_websites('conf.txt'))
+mon = MonitorProducer(delay=5, websites=get_websites('conf.txt'))
 mon.start_monitoring()
 print('start')
 time.sleep(20)
@@ -29,3 +32,6 @@ mon.start_monitoring()
 time.sleep(10)
 print('stop')
 mon.stop_monitoring()
+
+chrono_running = False
+thread.join()

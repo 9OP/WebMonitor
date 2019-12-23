@@ -4,13 +4,13 @@ from sqlite3 import Error
 
 
 DB = 'monitor_SQLite.db'
-MONITOR_SCHEMA = {'website': None,
-                  'date': None,
-                  'available': None,
-                  'response_time': None,
-                  'status_code': None,
-                  'size': None,
-                  'content': None}
+MONITOR_SCHEMA = ['website',
+                  'date',
+                  'available',
+                  'response_time',
+                  'status_code',
+                  'size',
+                  'content']
 TABLES = {
 'Monitor': '''
 CREATE TABLE Monitor (
@@ -20,7 +20,7 @@ CREATE TABLE Monitor (
     response_time TIME,
     status_code INTEGER,
     size INTEGER,
-    content_type TEXT
+    content TEXT
 );
 '''
 }
@@ -71,18 +71,10 @@ class Database:
         self._cursor.execute('''
             SELECT count(name) FROM sqlite_master WHERE type='table' AND name='Monitor'
         ''')
-        if self._cursor.fetchone()[0]!=1:
+        if self._cursor.fetchone()[0]!=1: # create table if doesn't exist
             self._create_table('Monitor')
 
-        self._cursor.execute(
-        '''
+        self._cursor.execute('''
             INSERT INTO Monitor VALUES (?,?,?,?,?,?,?)
-        ''', (record['website'],
-              record['date'],
-              record['available'],
-              record['response_time'],
-              record['status_code'],
-              record['size'],
-              record['content'])
-        )
+        ''', tuple([record[key] for key in MONITOR_SCHEMA]))
         self._connection.commit()

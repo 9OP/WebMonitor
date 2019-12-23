@@ -5,15 +5,22 @@ from database import Database, MONITOR_SCHEMA
 
 
 def get_websites(path):
+    ''' Return list of website from file path.
+    :param path: path to a file containing website addresses
+    '''
     websites = []
     with open(path) as outfile:
         for website in outfile:
             websites.append(website.rstrip('\n'))
+
     return websites
 
 
 def _monitor_website(website):
-    data = dict(MONITOR_SCHEMA)
+    ''' Monitor website: return raw monitoring data from website
+    :param website: http addresse of website to monitor
+    '''
+    data = {key: None for key in MONITOR_SCHEMA}
     data['website'] = website
     try:
         r = requests.get(website)
@@ -32,13 +39,8 @@ def _monitor_website(website):
 
 
 def _monitor_dump(data):
+    ''' Dump monitor data into project database monitor table
+    :param data: database monitor table record (dict MONITOR_SCHEMA)
+    '''
     db = Database()
     db.insert_monitor_record(data)
-
-
-# def main():
-#     data = _monitor_website('https://github.com/9OP')
-#     _monitor_dump(data)
-#
-# if __name__=='__main__':
-#     main()
