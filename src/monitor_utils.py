@@ -27,18 +27,19 @@ def _monitor_website(website):
     :return monitored website data
     '''
     data = {key: None for key in MONITOR_SCHEMA}
-    data['website'] = website
-    data['date'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    data[MONITOR_SCHEMA[0]] = website # website
+    data[MONITOR_SCHEMA[1]] = datetime.now().strftime('%Y-%m-%d %H:%M:%S') # date
     try:
         r = requests.get(website)
     except ConnectionError:
-        data['available'] = False
+        data[MONITOR_SCHEMA[2]] = False
     else:
-        data['available'] = True
-        data['status_code'] = r.status_code
-        data['response_time'] = r.elapsed.total_seconds()
-        data['content'] = r.headers['Content-type']
-        data['size'] = len(r.content)
+        data[MONITOR_SCHEMA[2]] = True # available
+        data[MONITOR_SCHEMA[3]] = r.elapsed.total_seconds() # response_time
+        data[MONITOR_SCHEMA[4]] = r.status_code # status_code
+        data[MONITOR_SCHEMA[5]] = len(r.content) # size
+        data[MONITOR_SCHEMA[6]] = r.headers['Content-type'] # content
+
     finally:
         return data
 

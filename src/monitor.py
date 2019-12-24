@@ -24,7 +24,7 @@ class MonitorProducer:
         :param website: website to monitor
         '''
         data = _monitor_website(website)
-        _monitor_dump(data)
+        _monitor_dump(data=data)
 
     def start_producing(self):
         ''' Start producing process...
@@ -68,6 +68,7 @@ class MonitorConsumer:
         # mon='10min' is top treeview, mon='1hour' is bottom treeview
         if type in ('10min', '1hour'):
             self.update(metrics=metrics, mon=type)
+            return 0
 
         if type=='watcher':
             date = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
@@ -75,11 +76,13 @@ class MonitorConsumer:
                 msg = ' Alert! website: '+website
                 self.send(type='alert', message=date+msg)
                 self.alert.append(website)
+                return 1
             if metrics[0] > 80:
                 if website in self.alert:
                     msg = ' Recover! website: '+website+' is recovering'
                     self.send(type='recover', message=date+msg)
                     self.alert.remove(website)
+                    return 2
 
     def start_consuming(self):
         ''' Start consuming process...
