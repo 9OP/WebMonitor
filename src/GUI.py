@@ -106,7 +106,8 @@ class Header:
 class MainFrame:
     def __init__(self):
         # Paned
-        self.paned = Gtk.VPaned()
+        self.paned1 = Gtk.VPaned()
+        self.paned2 = Gtk.VPaned()
 
         # 10 minutes look back monitor
         self.mon_10min = Monitor(title='10 minutes look back')
@@ -119,11 +120,12 @@ class MainFrame:
 
         # Pack
         self.vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self.paned.add1(self.mon_10min.get_top_level_widget())
-        self.paned.add2(self.mon_1h.get_top_level_widget())
-        self.vbox.pack_start(self.paned, True, True, 0)
-        self.vbox.pack_start(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL), False, True, 0)
-        self.vbox.pack_start(self.alert.get_top_level_widget(), True, True, 0)
+        self.paned1.add1(self.mon_10min.get_top_level_widget())
+        self.paned2.add1(self.mon_1h.get_top_level_widget())
+        self.paned2.add2(self.alert.get_top_level_widget())
+        self.paned2.set_position(250)
+        self.paned1.add2(self.paned2)
+        self.vbox.pack_start(self.paned1, True, True, 0)
 
     def get_top_level_widget(self):
         return self.vbox

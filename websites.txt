@@ -1,4 +1,8 @@
 https://facebook.com, 15
 https://google.com, 10
 https://datadoghq.com, 5
+https://twitter.com, 10
+https://palantir.com, 20
+https://apple.com, 20
+htpps://github.com/9OP/WebMonitor, 30
 https://123456789azertyuiop.net, 20
