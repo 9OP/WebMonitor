@@ -4,6 +4,7 @@ from gi.repository import Gtk, Gio, Pango, GdkPixbuf
 
 from database import MONITOR_METRICS
 from datetime import datetime
+from queue import Queue
 
 
 class Interface(Gtk.Window):
@@ -146,17 +147,22 @@ class Monitor:
         return self.vbox
 
     def update_liststore(self, metrics):
-        website = metrics[self.columns.index('Website')]
-        for i, row in enumerate(self.mon_liststore):
-            if row[self.columns.index('Website')] == website:
-                self.mon_liststore[i] = metrics
-                return #break flow... not super clean
-        self.mon_liststore.append(metrics)
-
+        index = self.columns.index('Website')
+        website = metrics[index]
+        if website:
+            for i, row in enumerate(self.mon_liststore):
+                if row[index] == website:
+                    self.mon_liststore[i] = metrics
+                    return #break flow... not super clean
+            self.mon_liststore.append(metrics)
 
 
 class AlertBox:
     def __init__(self):
+        # Asynchronize data structure to manage concurent call
+        # thread safe FIFO
+        self.queue = Queue()
+
         # Alert text view
         self.textview = Gtk.TextView()
         self.textbuffer = self.textview.get_buffer()
@@ -187,15 +193,21 @@ class AlertBox:
         return self.vbox
 
     def print_message(self, type, message):
+        self.queue.put((type, message+'\n'))
+        while not self.queue.empty():
+            type, message = self.queue.get()
+            self._print(type, message)
+
+    def _print(self, type, message):
         if type=='alert':
             self.textbuffer.insert_with_tags_by_name(
-                self.textbuffer.get_end_iter(), message+'\n', 'alert')
+                self.textbuffer.get_end_iter(), message, 'alert')
         elif type=='recover':
             self.textbuffer.insert_with_tags_by_name(
-                self.textbuffer.get_end_iter(), message+'\n', 'recover')
+                self.textbuffer.get_end_iter(), message, 'recover')
         else:
             self.textbuffer.insert_with_tags_by_name(
-                self.textbuffer.get_end_iter(), message+'\n', 'info')
+                self.textbuffer.get_end_iter(), message, 'info')
 
 
 def start_interface(interface):

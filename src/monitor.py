@@ -72,12 +72,12 @@ class MonitorConsumer:
         if type=='watcher':
             date = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
             if metrics[0] < 80 and website not in self.alert:
-                msg = 'Alert! website: '+website+' is down for more than 2 minutes!'
+                msg = ' Alert! website: '+website
                 self.send(type='alert', message=date+msg)
                 self.alert.append(website)
             if metrics[0] > 80:
                 if website in self.alert:
-                    msg = 'Recover! website: '+website+' is recovering'
+                    msg = ' Recover! website: '+website+' is recovering'
                     self.send(type='recover', message=date+msg)
                     self.alert.remove(website)
 
@@ -91,7 +91,7 @@ class MonitorConsumer:
             # every 60 seconds, check for the last 3600 seconds
             sched_1hour = Scheduler(60, self._collector, 60*60, website, '1hour')
             # Watch for alert and recover, protect us from the darkness...
-            sched_watcher = Scheduler(5, self._collector, 120, website, 'watcher')
+            sched_watcher = Scheduler(60, self._collector, 120, website, 'watcher')
 
             sched_10min.start()
             sched_1hour.start()
@@ -116,7 +116,6 @@ class MonitorConsumer:
     def send(**kwargs):
         # override with GUI send_message (send alert and recover message to GUI)
         pass
-
 
 
 class MonitorMaster:

@@ -58,6 +58,9 @@ def _monitor_collect(interval, website):
     t = datetime.now()-timedelta(minutes=interval)
     t = t.strftime('%Y-%m-%d %H:%M:%S')
     db = Database()
-    metrics = db.get_monitor_metrics(t, website)
-    metrics = [metrics[key] for key in MONITOR_METRICS]
-    return metrics
+    metrics = {key: None for key in MONITOR_METRICS}
+    try:
+        metrics = db.get_monitor_metrics(t, website)
+    finally:
+        metrics = [metrics[key] for key in MONITOR_METRICS]
+        return metrics

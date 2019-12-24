@@ -107,11 +107,12 @@ class Database:
         formater2 = lambda x: str(round(x/1000, 2))+' Kb' if (x is not None) else None
 
 
+
         # Rate of availability
         self._cursor.execute('''
             SELECT AVG(available) FROM Monitor WHERE date >= (?) AND website = (?)
         ''', (date, website))
-        metrics[MONITOR_METRICS[0]] = int(self._cursor.fetchall()[0][0])*100
+        metrics[MONITOR_METRICS[0]] = int(self._cursor.fetchall()[0][0]*100)
 
         # Website
         metrics[MONITOR_METRICS[1]] = website
@@ -120,7 +121,6 @@ class Database:
         self._cursor.execute('''
             SELECT AVG(response_time) FROM Monitor WHERE date >= (?) AND website = (?)
         ''', (date, website))
-        # metrics[MONITOR_METRICS[2]] = str(round(self._cursor.fetchall()[0][0])
         metrics[MONITOR_METRICS[2]] = formater1(self._cursor.fetchall()[0][0])
 
         # Max response_time
