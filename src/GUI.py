@@ -9,7 +9,6 @@ class Interface(Gtk.Window):
         # Window
         Gtk.Window.__init__(self, **kwargs)
         self.set_default_size(1100, 450)
-        self.set_border_width(10)
         self.set_icon_from_file('media/icon.png')
 
         # HeaderBar
@@ -25,15 +24,16 @@ class Interface(Gtk.Window):
         self.monitor_button = Gtk.ToggleButton(label="Start monitoring...")
         self.monitor_button.connect("toggled", self.on_monitor_button_toggled)
         self.monitor_button.set_active(False)
+        self.monitor_button.set_size_request(width=200, height=20)
 
         self.headerbar = Gtk.HeaderBar()
         self.headerbar.set_show_close_button(True)
         self.headerbar.props.title = 'Web Monitor'
         self.headerbar.props.subtitle = 'DataDog take home project - Martin GUYARD'
         self.headerbar.pack_start(self.spinner)
-        self.headerbar.pack_start(Gtk.Separator())
         self.headerbar.pack_start(self.monitor_button)
         self.headerbar.pack_start(self.image)
+        self.headerbar.pack_start(Gtk.Separator())
         self.set_titlebar(self.headerbar)
 
         # MainFrame
@@ -48,7 +48,7 @@ class Interface(Gtk.Window):
             self.spinner.start()
             self.send_message('info', date+' Start monitoring...')
             self.start_monitoring()
-            self.monitor_button.set_label("Stop monitoring.")
+            self.monitor_button.set_label("Stop monitoring...")
         else:
             self.spinner.stop()
             self.send_message('info', date+' Stop monitoring...')
@@ -71,17 +71,20 @@ class Interface(Gtk.Window):
 
     @staticmethod
     def start_monitoring():
-        # Overrinde with MonitorMaster.start_monitoring, in connect_to_monitor
+        # Override with MonitorMaster.start_monitoring, in connect_to_monitor
         pass
 
     @staticmethod
     def stop_monitoring():
-        # Overrinde with MonitorMaster.stop_monitoring, in connect_to_monitor
+        # Overrine with MonitorMaster.stop_monitoring, in connect_to_monitor
         pass
 
 
 class MainFrame:
     def __init__(self):
+        # Paned
+        self.paned = Gtk.VPaned()
+
         # 10 minutes look back monitor
         self.mon_10min = Monitor(title='10 minutes look back')
 
@@ -93,10 +96,11 @@ class MainFrame:
 
         # Pack
         self.vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self.vbox.pack_start(self.mon_10min.get_top_level_widget(), True, True, 10)
-        self.vbox.pack_start(self.mon_1h.get_top_level_widget(), True, True, 10)
+        self.paned.add1(self.mon_10min.get_top_level_widget())
+        self.paned.add2(self.mon_1h.get_top_level_widget())
+        self.vbox.pack_start(self.paned, True, True, 0)
         self.vbox.pack_start(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL), False, True, 0)
-        self.vbox.pack_start(self.alert.get_top_level_widget(), False, True, 10)
+        self.vbox.pack_start(self.alert.get_top_level_widget(), False, True, 0)
 
     def get_top_level_widget(self):
         return self.vbox
@@ -107,6 +111,9 @@ class Monitor:
         # MonitorLabel
         self.mon_label = Gtk.Label()
         self.mon_label.set_markup('<b>'+title+'</b>')
+
+        self.info = Gtk.InfoBar()
+        self.info.add(self.mon_label)
 
         # MonitorTreeview
         self.columns = MONITOR_METRICS
@@ -122,13 +129,13 @@ class Monitor:
                 column = Gtk.TreeViewColumn(column_title, renderer, text=i)
             self.mon_treeview.append_column(column)
 
-
         self.scrollable_treelist = Gtk.ScrolledWindow()
         self.scrollable_treelist.add(self.mon_treeview)
+        self.scrollable_treelist.set_size_request(400, 100)
 
         # Pack
         self.vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self.vbox.pack_start(self.mon_label, False, True, 0)
+        self.vbox.pack_start(self.info, False, False, 0)
         self.vbox.pack_start(self.scrollable_treelist, True, True, 0)
 
     def get_top_level_widget(self):
@@ -167,7 +174,7 @@ class AlertBox:
                         left_margin=10)
         self.textbuffer.create_tag("info",
                         weight=Pango.Weight.BOLD,
-                        foreground='blue',
+                        foreground='#127cc1',
                         left_margin=10)
 
         # Pack
