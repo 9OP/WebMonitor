@@ -11,7 +11,7 @@ class Interface(Gtk.Window):
     def __init__(self, **kwargs):
         # Window
         Gtk.Window.__init__(self, **kwargs)
-        self.set_default_size(1100, 450)
+        self.set_default_size(1200, 450)
         self.set_icon_from_file('media/icon.png')
 
         # HeaderBar
@@ -67,7 +67,7 @@ class Interface(Gtk.Window):
 class Header:
     def __init__(self):
         self.spinner = Gtk.Spinner()
-        self.timer = Gtk.Label()
+        self.timer = Gtk.Label(label=str(datetime.now().strftime('%H:%M:%S')))
 
         pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
                 filename='media/header_icon.png',

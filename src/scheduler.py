@@ -3,11 +3,12 @@ from threading import Timer
 
 class Scheduler:
     ''' Schedule task/funtion every X seconds
+        Clock master, time bender, thread slayer, core dumped father
     :param delay: intervals in seconds between tasks launching
     :param funtion: task to execute
     :param args: function arguments
     '''
-    
+
     def __init__(self, delay, function, *args):
         self.function = function
         self.delay = delay

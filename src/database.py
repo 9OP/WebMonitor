@@ -15,7 +15,7 @@ MONITOR_METRICS = ['Availability',
                    'Website',
                    'Avg resp time',
                    'Max resp time',
-                   'Status code',
+                   'Most occ code',
                    'Avg size',
                    'Max size',
                    'Content']
