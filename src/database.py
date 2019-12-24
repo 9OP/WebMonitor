@@ -13,12 +13,12 @@ MONITOR_SCHEMA = ['website',
                   'content']
 MONITOR_METRICS = ['Availability',
                    'Website',
-                   'Avg response time',
-                   'Max response time',
-                   'Most occurent status code',
-                   'Average size (byte)',
-                   'Max size (byte)',
-                   'Content type']
+                   'Avg resp time',
+                   'Max resp time',
+                   'Status code',
+                   'Avg size',
+                   'Max size',
+                   'Content']
 TABLES = {
 'Monitor': '''
 CREATE TABLE Monitor (

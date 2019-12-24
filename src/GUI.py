@@ -1,8 +1,10 @@
 import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gio, Pango, GdkPixbuf
+
 from database import MONITOR_METRICS
 from datetime import datetime
+
 
 class Interface(Gtk.Window):
     def __init__(self, **kwargs):

@@ -7,14 +7,16 @@ import argparse
 
 def arg():
     parser = argparse.ArgumentParser(description='DataDog take home web monitoring project')
-    parser.add_argument('interval', type=int, help='check interval (seconds) in 2-10 minutes')
+    parser.add_argument('--path', type=str, default='websites.txt',
+                        help='path to websites.txt (http://example.com, 10)')
     args = parser.parse_args()
     return args
 
 
-def main(check_interval, path='websites.txt'):
+def main(path):
     # Backend and GUI instantiation
-    mon = MonitorMaster(delay=check_interval, websites=get_websites(path))
+    delays, websites = get_websites(path)
+    mon = MonitorMaster(delays=delays, websites=websites)
     monGUI = Interface()
 
     # Connecting backend to GUI
@@ -28,9 +30,5 @@ def main(check_interval, path='websites.txt'):
     start_interface(monGUI)
 
 if __name__=='__main__':
-    interval = arg().interval
-    if interval>=120 and interval<=600:
-        main(check_interval=interval)
-    else:
-        print('Interval must be between 120 and 600 seconds!')
-        main(check_interval=5) # for debugging, remove before sending!!
+    path = arg().path
+    main(path=path)

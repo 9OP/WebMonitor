@@ -1,4 +1,4 @@
-https://facebook.com
-https://google.com
-https://datadoghq.com
-https://123456789azertyuiop.net
+https://facebook.com, 15
+https://google.com, 10
+https://datadoghq.com, 5
+https://123456789azertyuiop.net, 20

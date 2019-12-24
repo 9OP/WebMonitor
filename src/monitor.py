@@ -11,8 +11,8 @@ class MonitorProducer:
     :param websites: list of website (http addresses) to monitor
     '''
 
-    def __init__(self, delay, websites):
-        self.delay = delay
+    def __init__(self, delays, websites):
+        self.delays = delays
         self.websites = websites
         self.sched = []
 
@@ -30,8 +30,8 @@ class MonitorProducer:
         ''' Start producing process...
             Create Scheduler for each websites
         '''
-        for website in self.websites:
-            sched = Scheduler(self.delay, self._monitor, website)
+        for website, delay in zip(self.websites, self.delays):
+            sched = Scheduler(delay, self._monitor, website)
             sched.start()
             self.sched.append(sched)
 
@@ -55,19 +55,14 @@ class MonitorConsumer:
         self.websites = websites
         self.sched = []
 
-    # @staticmethod
-    def _collector(self, interval, website):
+    def _collector(self, interval, website, type):
         ''' Collect data from project database
             and compute metrics.
         :param interval: look back interval (in seconds)
         :param website: website http addresse
         '''
         metrics = _monitor_collect(interval, website)
-        if interval==600: #10minutes
-            self.send_to_GUI(metrics=metrics, mon='10min')
-        elif interval==3600: #1hour
-            self.send_to_GUI(metrics=metrics, mon='1hour')
-
+        self.send_to_GUI(metrics=metrics, mon=type)
         # _metrics_print(website, interval, metrics) #for debugging
 
     def start_consuming(self):
@@ -75,12 +70,10 @@ class MonitorConsumer:
             Create Scheduler for each websites
         '''
         for website in self.websites:
-            # Check interval: 120 seconds, for the last 600 seconds
-            # sched_10min = Scheduler(2*60, self._collector, 10*60, website)
-            # Check interval: 600 seconds, for the last 3600 seconds
-            # sched_1hour = Scheduler(10*60, self._collector, 60*60, website)
-            sched_10min = Scheduler(10, self._collector, 10*60, website)
-            sched_1hour = Scheduler(20, self._collector, 60*60, website)
+            # Check interval: 10 seconds, for the last 600 seconds
+            sched_10min = Scheduler(10, self._collector, 10*60, website, '10min')
+            # Check interval: 60 seconds, for the last 3600 seconds
+            sched_1hour = Scheduler(60, self._collector, 60*60, website, '1hour')
             sched_10min.start()
             sched_1hour.start()
             self.sched.append(sched_10min)
@@ -101,8 +94,8 @@ class MonitorConsumer:
 
 
 class MonitorMaster:
-    def __init__(self, delay, websites):
-        self._producer = MonitorProducer(delay, websites)
+    def __init__(self, delays, websites):
+        self._producer = MonitorProducer(delays, websites)
         self._consumer = MonitorConsumer(websites)
 
     def start_monitoring(self):

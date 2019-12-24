@@ -10,11 +10,15 @@ def get_websites(path):
     :return list of websites
     '''
     websites = []
+    delays = []
     with open(path) as outfile:
-        for website in outfile:
-            websites.append(website.rstrip('\n'))
+        for line in outfile:
+            website = line.split(', ')[0].rstrip('\n')
+            delay = line.split(', ')[1].rstrip('\n')
+            websites.append(website)
+            delays.append(int(delay))
 
-    return websites
+    return delays, websites
 
 
 def _monitor_website(website):
