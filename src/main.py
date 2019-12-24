@@ -10,11 +10,11 @@ def main():
     monGUI = Interface()
 
     # Connecting backend to GUI
-    mon._consumer.send_to_GUI = monGUI.update_monitoring
+    mon.connect_to_GUI(monGUI.update_monitoring)
 
     # Connecting GUI to backend
-    monGUI.start_monitoring = mon.start_monitoring
-    monGUI.stop_monitoring = mon.stop_monitoring
+    monGUI.connect_to_monitor(mon.start_monitoring,
+                              mon.stop_monitoring)
 
     # Start GUI
     start_interface(monGUI)

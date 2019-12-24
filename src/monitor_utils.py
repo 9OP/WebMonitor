@@ -55,7 +55,7 @@ def _monitor_collect(interval, website):
     t = t.strftime('%Y-%m-%d %H:%M:%S')
     db = Database()
     metrics = db.get_monitor_metrics(t, website)
-    metrics = [str(metrics[key]) for key in MONITOR_METRICS]
+    metrics = [metrics[key] for key in MONITOR_METRICS]
     return metrics
 
 

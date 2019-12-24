@@ -1,17 +1,26 @@
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gio, Pango, Gdk
-
+from gi.repository import Gtk, Gio, Pango, GdkPixbuf
+from database import MONITOR_METRICS
+from datetime import datetime
 
 class Interface(Gtk.Window):
     def __init__(self, **kwargs):
         # Window
         Gtk.Window.__init__(self, **kwargs)
-        self.set_default_size(1100, 350)
+        self.set_default_size(1100, 450)
         self.set_border_width(10)
+        self.set_icon_from_file('media/icon.png')
 
         # HeaderBar
         self.spinner = Gtk.Spinner()
+
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                filename='media/header_icon.png',
+                width=150,
+                height=150,
+                preserve_aspect_ratio=True)
+        self.image = Gtk.Image.new_from_pixbuf(pixbuf)
 
         self.monitor_button = Gtk.ToggleButton(label="Start monitoring...")
         self.monitor_button.connect("toggled", self.on_monitor_button_toggled)
@@ -24,6 +33,7 @@ class Interface(Gtk.Window):
         self.headerbar.pack_start(self.spinner)
         self.headerbar.pack_start(Gtk.Separator())
         self.headerbar.pack_start(self.monitor_button)
+        self.headerbar.pack_start(self.image)
         self.set_titlebar(self.headerbar)
 
         # MainFrame
@@ -31,23 +41,22 @@ class Interface(Gtk.Window):
 
         # Pack
         self.add(self.main_frame.get_top_level_widget())
-        # self.show_all()
 
     def on_monitor_button_toggled(self, button):
+        date = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         if button.get_active():
             self.spinner.start()
-            self.send_message('info', 'Start monitoring...')
+            self.send_message('info', date+' Start monitoring...')
             self.start_monitoring()
             self.monitor_button.set_label("Stop monitoring.")
         else:
             self.spinner.stop()
-            self.send_message('info', 'Stop monitoring...')
+            self.send_message('info', date+' Stop monitoring...')
             self.stop_monitoring()
             self.monitor_button.set_label("Start monitoring...")
 
 
     def update_monitoring(self, metrics, mon):
-        print(metrics)
         if mon=='10min':
             self.main_frame.mon_10min.update_liststore(metrics)
         elif mon=='1hour':
@@ -56,14 +65,18 @@ class Interface(Gtk.Window):
     def send_message(self, type, message):
         self.main_frame.alert.print_message(type, message)
 
+    def connect_to_monitor(self, start, stop):
+        self.start_monitoring = start
+        self.stop_monitoring = stop
+
     @staticmethod
     def start_monitoring():
-        # override with MonitorMaster.start_monitoring
+        # Overrinde with MonitorMaster.start_monitoring, in connect_to_monitor
         pass
 
     @staticmethod
     def stop_monitoring():
-        # override with MonitorMaster.stop_monitoring
+        # Overrinde with MonitorMaster.stop_monitoring, in connect_to_monitor
         pass
 
 
@@ -80,9 +93,10 @@ class MainFrame:
 
         # Pack
         self.vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self.vbox.pack_start(self.mon_10min.get_top_level_widget(), True, True, 0)
-        self.vbox.pack_start(self.mon_1h.get_top_level_widget(), True, True, 0)
-        self.vbox.pack_start(self.alert.get_top_level_widget(), True, True, 0)
+        self.vbox.pack_start(self.mon_10min.get_top_level_widget(), True, True, 10)
+        self.vbox.pack_start(self.mon_1h.get_top_level_widget(), True, True, 10)
+        self.vbox.pack_start(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL), False, True, 0)
+        self.vbox.pack_start(self.alert.get_top_level_widget(), False, True, 10)
 
     def get_top_level_widget(self):
         return self.vbox
@@ -95,20 +109,17 @@ class Monitor:
         self.mon_label.set_markup('<b>'+title+'</b>')
 
         # MonitorTreeview
-        # /!\ columns = database.MONITOR_METRICS it is not explicit to avoid dependencies
-        columns = ['Availability', 'Website', 'Avg response time',
-                   'Max response time', 'Most occurent status code',
-                   'Average size (byte)', 'Max size (byte)', 'Content type']
-        self.mon_liststore = Gtk.ListStore(str, str, str, str, str, str, str, str)
+        self.columns = MONITOR_METRICS
+        self.mon_liststore = Gtk.ListStore(int, str, str, str, str, str, str, str)
         self.mon_treeview =  Gtk.TreeView.new_with_model(self.mon_liststore)
 
-        # self.renderer_availability = Gtk.CellRendererProgress()
-        # column_availability = Gtk.TreeViewColumn('Availability', self.renderer_availability)
-        # self.mon_treeview.append_column(column_availability)
-
-        for i, column_title in enumerate(columns):
-            renderer = Gtk.CellRendererText()
-            column = Gtk.TreeViewColumn(column_title, renderer, text=i)
+        for i, column_title in enumerate(self.columns):
+            if i==0:
+                renderer = Gtk.CellRendererProgress()
+                column = Gtk.TreeViewColumn(column_title, renderer, value=i)
+            else:
+                renderer = Gtk.CellRendererText()
+                column = Gtk.TreeViewColumn(column_title, renderer, text=i)
             self.mon_treeview.append_column(column)
 
 
@@ -121,15 +132,18 @@ class Monitor:
         self.vbox.pack_start(self.scrollable_treelist, True, True, 0)
 
     def get_top_level_widget(self):
-        # self.update_liststore([('100', 'https://google.com', '1s', '2s', '200', '1kb', '2kb', 'text')])
-        # self.update_liststore([('75', 'https://facebook.com', '1s', '2s', '200', '1kb', '2kb', 'text')])
+        # self.update_liststore([99, 'https://google.com', '1s', '2s', '200', '1kb', '2kb', 'text'])
+        # self.update_liststore([53, 'https://facebook.com', '1s', '2s', '200', '1kb', '2kb', 'text'])
         return self.vbox
 
     def update_liststore(self, metrics):
+        website = metrics[self.columns.index('Website')]
+        for i, row in enumerate(self.mon_liststore):
+            if row[self.columns.index('Website')] == website:
+                self.mon_liststore[i] = metrics
+                return #break flow... not super clean
         self.mon_liststore.append(metrics)
-        # self.mon_liststore.clear()
-        # for metric in metrics:
-        #     self.mon_liststore.append(list(metric))
+
 
 
 class AlertBox:
@@ -153,7 +167,7 @@ class AlertBox:
                         left_margin=10)
         self.textbuffer.create_tag("info",
                         weight=Pango.Weight.BOLD,
-                        foreground='yellow',
+                        foreground='blue',
                         left_margin=10)
 
         # Pack

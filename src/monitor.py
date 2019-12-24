@@ -75,7 +75,9 @@ class MonitorConsumer:
             Create Scheduler for each websites
         '''
         for website in self.websites:
+            # Check interval: 120 seconds, for the last 600 seconds
             # sched_10min = Scheduler(2*60, self._collector, 10*60, website)
+            # Check interval: 600 seconds, for the last 3600 seconds
             # sched_1hour = Scheduler(10*60, self._collector, 60*60, website)
             sched_10min = Scheduler(10, self._collector, 10*60, website)
             sched_1hour = Scheduler(20, self._collector, 60*60, website)
