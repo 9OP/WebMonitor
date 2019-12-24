@@ -3,8 +3,9 @@ from monitor import MonitorMaster
 from monitor_utils import get_websites
 
 
+
 def main():
-    # Backend and GUI instanciation
+    # Backend and GUI instantiation
     mon = MonitorMaster(delay=5, websites=get_websites('websites.txt'))
     monGUI = Interface()
 

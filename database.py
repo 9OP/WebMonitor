@@ -11,7 +11,14 @@ MONITOR_SCHEMA = ['website',
                   'status_code',
                   'size',
                   'content']
-# MONITOR_METRICS =
+MONITOR_METRICS = ['Availability',
+                   'Website',
+                   'Avg response time',
+                   'Max response time',
+                   'Most occurent status code',
+                   'Average size (byte)',
+                   'Max size (byte)',
+                   'Content type']
 TABLES = {
 'Monitor': '''
 CREATE TABLE Monitor (
@@ -94,31 +101,22 @@ class Database:
         self._cursor.execute('''
             SELECT AVG(available) FROM Monitor WHERE date >= (?) AND website = (?)
         ''', (date, website))
-        metrics['availability_rate'] = self._cursor.fetchall()[0][0]
+        metrics[MONITOR_METRICS[0]] = self._cursor.fetchall()[0][0]
+
+        # Website
+        metrics[MONITOR_METRICS[1]] = website
 
         # Avg response_time
         self._cursor.execute('''
             SELECT AVG(response_time) FROM Monitor WHERE date >= (?) AND website = (?)
         ''', (date, website))
-        metrics['avg_response_time'] = self._cursor.fetchall()[0][0]
+        metrics[MONITOR_METRICS[2]] = self._cursor.fetchall()[0][0]
 
         # Max response_time
         self._cursor.execute('''
             SELECT MAX(response_time) FROM Monitor WHERE date >= (?) AND website = (?)
         ''', (date, website))
-        metrics['max_response_time'] = self._cursor.fetchall()[0][0]
-
-        # Avg size
-        self._cursor.execute('''
-            SELECT AVG(size) FROM Monitor WHERE date >= (?) AND website = (?)
-        ''', (date, website))
-        metrics['average_size'] = self._cursor.fetchall()[0][0]
-
-        # Max size
-        self._cursor.execute('''
-            SELECT MAX(size) FROM Monitor WHERE date >= (?) AND website = (?)
-        ''', (date, website))
-        metrics['max_size'] = self._cursor.fetchall()[0][0]
+        metrics[MONITOR_METRICS[3]] = self._cursor.fetchall()[0][0]
 
         # Most occuring status_code
         self._cursor.execute('''
@@ -127,7 +125,19 @@ class Database:
             ORDER BY occ DESC
             LIMIT 1
         ''', (date, website))
-        metrics['most_occuring_status_code'] = self._cursor.fetchall()[0][0]
+        metrics[MONITOR_METRICS[4]] = self._cursor.fetchall()[0][0]
+
+        # Avg size
+        self._cursor.execute('''
+            SELECT AVG(size) FROM Monitor WHERE date >= (?) AND website = (?)
+        ''', (date, website))
+        metrics[MONITOR_METRICS[5]] = self._cursor.fetchall()[0][0]
+
+        # Max size
+        self._cursor.execute('''
+            SELECT MAX(size) FROM Monitor WHERE date >= (?) AND website = (?)
+        ''', (date, website))
+        metrics[MONITOR_METRICS[6]] = self._cursor.fetchall()[0][0]
 
         # Most occuring content type
         self._cursor.execute('''
@@ -136,6 +146,6 @@ class Database:
             ORDER BY occ DESC
             LIMIT 1
         ''', (date, website))
-        metrics['most_occuring_content_type'] = self._cursor.fetchall()[0][0]
+        metrics[MONITOR_METRICS[7]] = self._cursor.fetchall()[0][0]
 
         return metrics

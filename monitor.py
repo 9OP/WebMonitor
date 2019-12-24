@@ -55,19 +55,18 @@ class MonitorConsumer:
         self.websites = websites
         self.sched = []
 
-    @staticmethod
-    def _collector(interval, website):
-        ''' Static method (usable without class instance)
-            Collect data from project database
+    # @staticmethod
+    def _collector(self, interval, website):
+        ''' Collect data from project database
             and compute metrics.
         :param interval: look back interval (in seconds)
         :param website: website http addresse
         '''
         metrics = _monitor_collect(interval, website)
         if interval==600: #10minutes
-            MonitorConsumer.send_to_GUI(metrics=metrics, mon='10min')
+            self.send_to_GUI(metrics=metrics, mon='10min')
         elif interval==3600: #1hour
-            MonitorConsumer.send_to_GUI(metrics=metrics, mon='1hour')
+            self.send_to_GUI(metrics=metrics, mon='1hour')
 
         # _metrics_print(website, interval, metrics) #for debugging
 
@@ -79,7 +78,7 @@ class MonitorConsumer:
             # sched_10min = Scheduler(2*60, self._collector, 10*60, website)
             # sched_1hour = Scheduler(10*60, self._collector, 60*60, website)
             sched_10min = Scheduler(10, self._collector, 10*60, website)
-            sched_1hour = Scheduler(60, self._collector, 60*60, website)
+            sched_1hour = Scheduler(20, self._collector, 60*60, website)
             sched_10min.start()
             sched_1hour.start()
             self.sched.append(sched_10min)

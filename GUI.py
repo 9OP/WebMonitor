@@ -47,6 +47,7 @@ class Interface(Gtk.Window):
 
 
     def update_monitoring(self, metrics, mon):
+        print(metrics)
         if mon=='10min':
             self.main_frame.mon_10min.update_liststore(metrics)
         elif mon=='1hour':
@@ -94,9 +95,10 @@ class Monitor:
         self.mon_label.set_markup('<b>'+title+'</b>')
 
         # MonitorTreeview
-        columns = ['Website', 'Avg response time', 'Max response time',
-                   'Most occurent status code', 'Average size (byte)',
-                   'Max size (byte)', 'Content type']
+        # /!\ columns = database.MONITOR_METRICS it is not explicit to avoid dependencies
+        columns = ['Availability', 'Website', 'Avg response time',
+                   'Max response time', 'Most occurent status code',
+                   'Average size (byte)', 'Max size (byte)', 'Content type']
         self.mon_liststore = Gtk.ListStore(str, str, str, str, str, str, str, str)
         self.mon_treeview =  Gtk.TreeView.new_with_model(self.mon_liststore)
 
@@ -119,14 +121,15 @@ class Monitor:
         self.vbox.pack_start(self.scrollable_treelist, True, True, 0)
 
     def get_top_level_widget(self):
-        self.update_liststore([('100', 'https://google.com', '1s', '2s', '200', '1kb', '2kb', 'text')])
-        self.update_liststore([('75', 'https://facebook.com', '1s', '2s', '200', '1kb', '2kb', 'text')])
+        # self.update_liststore([('100', 'https://google.com', '1s', '2s', '200', '1kb', '2kb', 'text')])
+        # self.update_liststore([('75', 'https://facebook.com', '1s', '2s', '200', '1kb', '2kb', 'text')])
         return self.vbox
 
     def update_liststore(self, metrics):
-        self.mon_liststore.clear()
-        for metric in metrics:
-            self.mon_liststore.append(list(metric))
+        self.mon_liststore.append(metrics)
+        # self.mon_liststore.clear()
+        # for metric in metrics:
+        #     self.mon_liststore.append(list(metric))
 
 
 class AlertBox:

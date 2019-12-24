@@ -1,7 +1,7 @@
 import requests
 from requests.exceptions import ConnectionError
 from datetime import datetime, timedelta
-from database import Database, MONITOR_SCHEMA
+from database import Database, MONITOR_SCHEMA, MONITOR_METRICS
 
 
 def get_websites(path):
@@ -55,6 +55,7 @@ def _monitor_collect(interval, website):
     t = t.strftime('%Y-%m-%d %H:%M:%S')
     db = Database()
     metrics = db.get_monitor_metrics(t, website)
+    metrics = [str(metrics[key]) for key in MONITOR_METRICS]
     return metrics
 
 
