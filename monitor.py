@@ -64,7 +64,12 @@ class MonitorConsumer:
         :param website: website http addresse
         '''
         metrics = _monitor_collect(interval, website)
-        _metrics_print(website, interval, metrics)
+        if interval==600: #10minutes
+            MonitorConsumer.send_to_GUI(metrics=metrics, mon='10min')
+        elif interval==3600: #1hour
+            MonitorConsumer.send_to_GUI(metrics=metrics, mon='1hour')
+
+        # _metrics_print(website, interval, metrics) #for debugging
 
     def start_consuming(self):
         ''' Start consuming process...
@@ -87,6 +92,11 @@ class MonitorConsumer:
         for sched in self.sched:
             sched.stop()
 
+    @staticmethod
+    def send_to_GUI(**kwargs):
+        # override with GUI update_monitoring
+        pass
+
 
 
 class MonitorMaster:
@@ -101,3 +111,6 @@ class MonitorMaster:
     def stop_monitoring(self):
         self._producer.stop_producing()
         self._consumer.stop_consuming()
+
+    def connect_to_GUI(self, function):
+        self._consumer.send_to_GUI = function
