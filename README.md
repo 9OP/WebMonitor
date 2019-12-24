@@ -22,8 +22,20 @@ design pattern.
 - [X] Backend
 - [X] UI
 - [X] Watchers for alert and recover
-- [ ] Tests for watchers and alert system
-- [ ] Monitor on timeframe 2min and 10min => UI modification
+- [X] Tests for watcher recover and alert system
 
 ### Installation
-download the repo, install the dependancies, execute DDmonitor (sh script that call src/main.py)
+**Steps:**
+- download the repo, ``` $ git clone https://github.com/9OP/WebMonitor```
+- install the dependancies, ``` $ pip3 install -r requirements.txt```
+- execute DDmonitor ``` $ sh ./DDmonitor ```
+
+### Improvement
+Overall I think the **design is pretty strong.**:
+- **MVC architecture**, the GUI, MonitorMaster, and DB are cleanly separated. 
+- **Schedulers**, launch threads with a certain frequence
+- **SQLite DB and Database class interface**, enable persistence of monitoring
+
+Some improvement on the GUI are possible, designing an UI is a very difficult taks and comming up with something easy to use pretty is not trivial.
+
+Also some parameters are hardcoded and not availble to the user (for instance look back perdiod and update intervals for the Schedulers).
