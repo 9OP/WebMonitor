@@ -27,6 +27,10 @@ def main(path):
     monGUI.connect_to_monitor(start=mon.start_monitoring,
                               stop=mon.stop_monitoring)
 
+    # Send monitored websites to GUI
+    for d, w in zip(delays, websites):
+        monGUI.send_message(type='mon', message='{} : {}'.format(w, str(d)+' s'))
+
     # Start GUI
     start_interface(monGUI)
 

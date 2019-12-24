@@ -7,7 +7,7 @@ from monitor import MonitorConsumer
 from database import Database, MONITOR_SCHEMA, DB
 from datetime import datetime
 
-DB = 'test_monitor_SQLite.db'
+
 
 class AlertTest(unittest.TestCase):
     ''' Test Monitor Alert system (in MonitorConsumer._collector)
@@ -58,5 +58,6 @@ class AlertTest(unittest.TestCase):
         # Assert recover send: Availability=90 > 80, return 2
         assert self.mon._collector(interval=10, website=website, type='watcher') == 2
         self._rm_db()
+
 
 unittest.main()

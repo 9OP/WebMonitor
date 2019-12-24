@@ -59,7 +59,7 @@ class Interface(Gtk.Window):
 
     @staticmethod
     def stop_monitoring():
-        # Overrine with MonitorMaster.stop_monitoring, in connect_to_monitor
+        # Override with MonitorMaster.stop_monitoring, in connect_to_monitor
         pass
 
 
@@ -131,6 +131,10 @@ class MainFrame:
 
 class Monitor:
     def __init__(self, title):
+        # Asynchronize data structure to prevent
+        # concurrent access to list store update
+        self.queue = Queue()
+
         # MonitorLabel
         self.mon_label = Gtk.Label()
         self.mon_label.set_markup('<b>'+title+'</b>')
@@ -163,11 +167,15 @@ class Monitor:
         self.vbox.pack_start(self.scrollable_treelist, True, True, 0)
 
     def get_top_level_widget(self):
-        # self.update_liststore([99, 'https://google.com', '1s', '2s', '200', '1kb', '2kb', 'text'])
-        # self.update_liststore([53, 'https://facebook.com', '1s', '2s', '200', '1kb', '2kb', 'text'])
         return self.vbox
 
     def update_liststore(self, metrics):
+        self.queue.put(metrics)
+        while not self.queue.empty():
+            met = self.queue.get()
+            self._update(met)
+
+    def _update(self, metrics):
         index = self.columns.index('Website')
         website = metrics[index]
         if website:
@@ -205,6 +213,9 @@ class AlertBox:
                         weight=Pango.Weight.BOLD,
                         foreground='#127cc1',
                         left_margin=10)
+        self.textbuffer.create_tag("mon",
+                        foreground='grey',
+                        left_margin=10)
 
         # Pack
         self.vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -216,8 +227,8 @@ class AlertBox:
     def print_message(self, type, message):
         self.queue.put((type, message+'\n'))
         while not self.queue.empty():
-            type, message = self.queue.get()
-            self._print(type, message)
+            tp, msg = self.queue.get()
+            self._print(tp, msg)
 
     def _print(self, type, message):
         if type=='alert':
@@ -226,9 +237,12 @@ class AlertBox:
         elif type=='recover':
             self.textbuffer.insert_with_tags_by_name(
                 self.textbuffer.get_end_iter(), message, 'recover')
-        else:
+        elif type=='info':
             self.textbuffer.insert_with_tags_by_name(
                 self.textbuffer.get_end_iter(), message, 'info')
+        else:
+            self.textbuffer.insert_with_tags_by_name(
+                self.textbuffer.get_end_iter(), message, 'mon')
 
 
 def start_interface(interface):
