@@ -96,7 +96,16 @@ class Database:
         ex: date format: YYYY-MM-DD HH:MM:SS
         '''
         metrics = {}
-        formater = lambda x, n: str(round(x, 4))+n if (x is not None) else None
+
+        # Return str(x)
+        formater0 = lambda x: str(x) if (x is not None) else None
+
+        # Return rounded time x
+        formater1 = lambda x: str(round(x, 4))+' s' if (x is not None) else None
+
+        # Return rounded kb size x
+        formater2 = lambda x: str(round(x/1000, 2))+' Kb' if (x is not None) else None
+
 
         # Rate of availability
         self._cursor.execute('''
@@ -112,13 +121,13 @@ class Database:
             SELECT AVG(response_time) FROM Monitor WHERE date >= (?) AND website = (?)
         ''', (date, website))
         # metrics[MONITOR_METRICS[2]] = str(round(self._cursor.fetchall()[0][0])
-        metrics[MONITOR_METRICS[2]] = formater(self._cursor.fetchall()[0][0], ' s')
+        metrics[MONITOR_METRICS[2]] = formater1(self._cursor.fetchall()[0][0])
 
         # Max response_time
         self._cursor.execute('''
             SELECT MAX(response_time) FROM Monitor WHERE date >= (?) AND website = (?)
         ''', (date, website))
-        metrics[MONITOR_METRICS[3]] = formater(self._cursor.fetchall()[0][0], ' s')
+        metrics[MONITOR_METRICS[3]] = formater1(self._cursor.fetchall()[0][0])
 
         # Most occuring status_code
         self._cursor.execute('''
@@ -127,19 +136,19 @@ class Database:
             ORDER BY occ DESC
             LIMIT 1
         ''', (date, website))
-        metrics[MONITOR_METRICS[4]] = str(self._cursor.fetchall()[0][0])
+        metrics[MONITOR_METRICS[4]] = formater0(self._cursor.fetchall()[0][0])
 
         # Avg size
         self._cursor.execute('''
             SELECT AVG(size) FROM Monitor WHERE date >= (?) AND website = (?)
         ''', (date, website))
-        metrics[MONITOR_METRICS[5]] = str(self._cursor.fetchall()[0][0])
+        metrics[MONITOR_METRICS[5]] = formater2(self._cursor.fetchall()[0][0])
 
         # Max size
         self._cursor.execute('''
             SELECT MAX(size) FROM Monitor WHERE date >= (?) AND website = (?)
         ''', (date, website))
-        metrics[MONITOR_METRICS[6]] = str(self._cursor.fetchall()[0][0])
+        metrics[MONITOR_METRICS[6]] = formater2(self._cursor.fetchall()[0][0])
 
         # Most occuring content type
         self._cursor.execute('''
@@ -148,6 +157,6 @@ class Database:
             ORDER BY occ DESC
             LIMIT 1
         ''', (date, website))
-        metrics[MONITOR_METRICS[7]] = str(self._cursor.fetchall()[0][0])
+        metrics[MONITOR_METRICS[7]] = formater0(self._cursor.fetchall()[0][0])
 
         return metrics

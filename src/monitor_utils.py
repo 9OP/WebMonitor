@@ -61,12 +61,3 @@ def _monitor_collect(interval, website):
     metrics = db.get_monitor_metrics(t, website)
     metrics = [metrics[key] for key in MONITOR_METRICS]
     return metrics
-
-
-def _metrics_print(website, interval, metrics):
-    print('{:<10}{:<5}{:<10}{}'.format('Interval:', str(interval/60)+'min', 'Website:', website))
-    print('-'*50)
-    for metric, val in metrics.items():
-        print('{:<35}{}'.format(metric+': ', val))
-    print('-'*50)
-    print('\n')

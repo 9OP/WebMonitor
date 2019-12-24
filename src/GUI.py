@@ -102,7 +102,7 @@ class MainFrame:
         self.paned.add2(self.mon_1h.get_top_level_widget())
         self.vbox.pack_start(self.paned, True, True, 0)
         self.vbox.pack_start(Gtk.Separator(orientation=Gtk.Orientation.HORIZONTAL), False, True, 0)
-        self.vbox.pack_start(self.alert.get_top_level_widget(), False, True, 0)
+        self.vbox.pack_start(self.alert.get_top_level_widget(), True, True, 0)
 
     def get_top_level_widget(self):
         return self.vbox

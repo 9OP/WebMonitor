@@ -20,11 +20,12 @@ def main(path):
     monGUI = Interface()
 
     # Connecting backend to GUI
-    mon.connect_to_GUI(monGUI.update_monitoring)
+    mon.connect_to_GUI(update=monGUI.update_monitoring,
+                       send=monGUI.send_message)
 
     # Connecting GUI to backend
-    monGUI.connect_to_monitor(mon.start_monitoring,
-                              mon.stop_monitoring)
+    monGUI.connect_to_monitor(start=mon.start_monitoring,
+                              stop=mon.stop_monitoring)
 
     # Start GUI
     start_interface(monGUI)
