@@ -24,3 +24,6 @@ design pattern.
 - [X] Watchers for alert and recover
 - [ ] Tests for watchers and alert system
 - [ ] Monitor on timeframe 2min and 10min => UI modification
+
+### Installation
+download the repo, install the dependancies, execute DDmonitor (sh script that call src/main.py)
