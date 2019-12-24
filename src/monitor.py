@@ -70,7 +70,7 @@ class MonitorConsumer:
             self.update(metrics=metrics, mon=type)
             return 0
 
-        if type=='watcher':
+        if type=='watcher' and metrics[0]:
             date = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
             if metrics[0] < 80 and website not in self.alert:
                 msg = ' Alert! website: '+website
@@ -94,7 +94,7 @@ class MonitorConsumer:
             # every 60 seconds, check for the last 3600 seconds
             sched_1hour = Scheduler(60, self._collector, 60*60, website, '1hour')
             # Watch for alert and recover, protect us from the darkness...
-            sched_watcher = Scheduler(60, self._collector, 120, website, 'watcher')
+            sched_watcher = Scheduler(20, self._collector, 120, website, 'watcher')
 
             sched_10min.start()
             sched_1hour.start()
