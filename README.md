@@ -25,10 +25,13 @@ design pattern.
 - [X] Tests for watcher recover and alert system
 
 ### Installation
+
+If you run it on a Linux machine, you might be able to skip 2), if you run it on Windows... well you clearly lose yourself and should be here in the first place. (Windows doesn't like GTK lib so good luck...)
+
 **Steps:**
-- download the repo, ``` $ git clone https://github.com/9OP/WebMonitor```
-- install the dependancies, ``` $ pip3 install -r requirements.txt```
-- execute DDmonitor ``` $ sh ./DDmonitor ```
+- 1) download the repo, ``` $ git clone https://github.com/9OP/WebMonitor```
+- 2) install the dependancies, ``` $ pip3 install -r requirements.txt```
+- 3) execute DDmonitor ``` $ sh ./DDmonitor ```
 
 ### Improvement
 Overall I think the **design is pretty strong.**:
@@ -39,3 +42,10 @@ Overall I think the **design is pretty strong.**:
 Some improvement on the GUI are possible, designing an UI is a very difficult taks and comming up with something easy to use pretty is not trivial.
 
 Also some parameters are hardcoded and not availble to the user (for instance look back perdiod and update intervals for the Schedulers).
+
+**Concerns and Warnings:** 
+
+SQLite dabatase doesnt not handle well multi connection writting, this is possible that while running the database stop connection and lock itsel. One improvement would be to use MUTEX (threading Lock) to make sure no Schedulers are writting at the same time. This is clearly is small change on the code (pass a lock variable to Schedulers, lock and unlock db when writting). I did not do it for several reasons: 
+- keep code simple (ideas are more important), 
+- this is a small projects no need to try hard, 
+- If we move to another db engine, the lock will be useless, this is mostly a SQLite limitations (every proper db engine supports concurrent access in R/W).
