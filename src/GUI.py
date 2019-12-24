@@ -1,6 +1,6 @@
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gio, Pango, GdkPixbuf
+from gi.repository import Gtk, GLib, Gio, Pango, GdkPixbuf
 
 from database import MONITOR_METRICS
 from datetime import datetime
@@ -15,29 +15,9 @@ class Interface(Gtk.Window):
         self.set_icon_from_file('media/icon.png')
 
         # HeaderBar
-        self.spinner = Gtk.Spinner()
-
-        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                filename='media/header_icon.png',
-                width=150,
-                height=150,
-                preserve_aspect_ratio=True)
-        self.image = Gtk.Image.new_from_pixbuf(pixbuf)
-
-        self.monitor_button = Gtk.ToggleButton(label="Start monitoring...")
-        self.monitor_button.connect("toggled", self.on_monitor_button_toggled)
-        self.monitor_button.set_active(False)
-        self.monitor_button.set_size_request(width=200, height=20)
-
-        self.headerbar = Gtk.HeaderBar()
-        self.headerbar.set_show_close_button(True)
-        self.headerbar.props.title = 'Web Monitor'
-        self.headerbar.props.subtitle = 'DataDog take home project - Martin GUYARD'
-        self.headerbar.pack_start(self.spinner)
-        self.headerbar.pack_start(self.monitor_button)
-        self.headerbar.pack_start(self.image)
-        self.headerbar.pack_start(Gtk.Separator())
-        self.set_titlebar(self.headerbar)
+        self.header = Header()
+        self.header.monitor_button.connect("toggled", self.on_monitor_button_toggled)
+        self.set_titlebar(self.header.headerbar)
 
         # MainFrame
         self.main_frame = MainFrame()
@@ -45,19 +25,19 @@ class Interface(Gtk.Window):
         # Pack
         self.add(self.main_frame.get_top_level_widget())
 
+
     def on_monitor_button_toggled(self, button):
         date = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         if button.get_active():
-            self.spinner.start()
+            self.header.spinner.start()
             self.send_message('info', date+' Start monitoring...')
             self.start_monitoring()
-            self.monitor_button.set_label("Stop monitoring...")
+            self.header.monitor_button.set_label("Stop monitoring...")
         else:
-            self.spinner.stop()
+            self.header.spinner.stop()
             self.send_message('info', date+' Stop monitoring...')
             self.stop_monitoring()
-            self.monitor_button.set_label("Start monitoring...")
-
+            self.header.monitor_button.set_label("Start monitoring...")
 
     def update_monitoring(self, metrics, mon):
         if mon=='10min':
@@ -81,6 +61,46 @@ class Interface(Gtk.Window):
     def stop_monitoring():
         # Overrine with MonitorMaster.stop_monitoring, in connect_to_monitor
         pass
+
+
+
+class Header:
+    def __init__(self):
+        self.spinner = Gtk.Spinner()
+        self.timer = Gtk.Label()
+
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                filename='media/header_icon.png',
+                width=150,
+                height=150,
+                preserve_aspect_ratio=True)
+        self.image = Gtk.Image.new_from_pixbuf(pixbuf)
+
+        self.monitor_button = Gtk.ToggleButton(label="Start monitoring...")
+        # self.monitor_button.connect("toggled", self.on_monitor_button_toggled)
+        self.monitor_button.set_active(False)
+        self.monitor_button.set_size_request(width=200, height=20)
+
+        self.headerbar = Gtk.HeaderBar()
+        self.headerbar.set_show_close_button(True)
+        self.headerbar.props.title = 'Web Monitor'
+        self.headerbar.props.subtitle = 'DataDog take home project - Martin GUYARD'
+        self.headerbar.pack_start(self.spinner)
+        self.headerbar.pack_start(self.monitor_button)
+        self.headerbar.pack_start(self.image)
+        self.headerbar.pack_start(Gtk.Separator())
+        self.headerbar.pack_end(self.timer)
+
+        self._startclocktimer()
+
+    def _displayclock(self):
+        datetimenow = str(datetime.now().strftime('%H:%M:%S'))
+        self.timer.set_label(datetimenow)
+        return True
+
+    def _startclocktimer(self):
+        GLib.timeout_add(1000, self._displayclock)
+
 
 
 class MainFrame:
@@ -130,6 +150,7 @@ class Monitor:
             else:
                 renderer = Gtk.CellRendererText()
                 column = Gtk.TreeViewColumn(column_title, renderer, text=i)
+            column.set_sort_column_id(i)
             self.mon_treeview.append_column(column)
 
         self.scrollable_treelist = Gtk.ScrolledWindow()

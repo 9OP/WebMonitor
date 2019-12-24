@@ -15,7 +15,7 @@ https://example3.com, check_interval3
 WebMonitor relies on Schedulers and thread and is based on a Producer-Consumer
 design pattern.
 
-<img src='example.png'>
+<img src='media/example.png'>
 
 **To do:**
 - [X] Schedulers and MonitorMaster
