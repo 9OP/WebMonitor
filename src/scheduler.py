@@ -24,7 +24,7 @@ class Scheduler:
     def start(self):
         if not self.running:
             self._timer = Timer(self.delay, self._run)
-            self._timer.setDaemon(True)
+            self._timer.setDaemon(True) # stop when application stopped
             self._timer.start()
             self.running = True
 

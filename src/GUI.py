@@ -5,6 +5,7 @@ from gi.repository import Gtk, GLib, Gio, Pango, GdkPixbuf
 from database import MONITOR_METRICS
 from datetime import datetime
 from queue import Queue
+import threading
 
 
 class Interface(Gtk.Window):
@@ -143,6 +144,7 @@ class Monitor:
         # Asynchronize data structure to prevent
         # concurrent access to list store update
         self.queue = Queue()
+        self.lock = threading.Lock()
 
         # MonitorLabel
         self.mon_label = Gtk.Label()
@@ -185,6 +187,7 @@ class Monitor:
             self._update(met)
 
     def _update(self, metrics):
+        self.lock.acquire()
         index = self.columns.index('Website')
         website = metrics[index]
         if website:
@@ -193,13 +196,14 @@ class Monitor:
                     self.mon_liststore[i] = metrics
                     return #break flow... not super clean
             self.mon_liststore.append(metrics)
-
+        self.lock.release()
 
 class AlertBox:
     def __init__(self):
         # Asynchronize data structure to manage concurent call
         # thread safe FIFO
         self.queue = Queue()
+        self.lock = threading.Lock()
 
         # Alert text view
         self.textview = Gtk.TextView()
@@ -240,6 +244,7 @@ class AlertBox:
             self._print(tp, msg)
 
     def _print(self, type, message):
+        self.lock.acquire()
         if type=='alert':
             self.textbuffer.insert_with_tags_by_name(
                 self.textbuffer.get_end_iter(), message, 'alert')
@@ -252,7 +257,7 @@ class AlertBox:
         else:
             self.textbuffer.insert_with_tags_by_name(
                 self.textbuffer.get_end_iter(), message, 'mon')
-
+        self.lock.release()
 
 def start_interface(interface):
     interface.connect("destroy", Gtk.main_quit)

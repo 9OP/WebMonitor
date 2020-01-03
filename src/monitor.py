@@ -143,17 +143,9 @@ class MonitorMaster:
         self._consumer.start_consuming()
 
     def stop_monitoring(self):
-        self._producer.stop_producing()
         self._consumer.stop_consuming()
+        self._producer.stop_producing()
 
     def connect_to_GUI(self, update, send):
         self._consumer.update = update
         self._consumer.send = send
-
-
-'''
-2 entretiens : 1  junior consuktant 1h30 + (samuel benarouche) => regarder site sujet de stage: selection de 3 sujets
-attentes: la posture du consultant, discours structuré, capacité de prise de recul, retour exp, + preparer des questions
-revoir les 3 practices.
-etude de cas sur sujet de stage avec manager senior + challenger l etude de cas + fb de 1er entretiens
-'''
