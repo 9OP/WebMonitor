@@ -13,7 +13,7 @@ pip3 install virtualenv
 python3 -m venv ${BASEDIR}/venv/
 
 # INSTALL requirements for WebMonitor
-venv/bin/pip3 install -r ${BASEDIR}/resources/conf/requirements.txt
+${BASEDIR}/venv/bin/pip3 install -r ${BASEDIR}/resources/conf/requirements.txt
 
 # ADD app to $PATH
 PATH=$PATH:${BASEDIR}
