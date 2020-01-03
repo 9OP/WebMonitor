@@ -1,2 +1,3 @@
 #!/bin/sh
-venv/bin/python3 src/main.py
+BASEDIR=$(dirname "$0")
+${BASEDIR}/venv/bin/python3 ${BASEDIR}/src/main.py

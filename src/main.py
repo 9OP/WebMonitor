@@ -1,7 +1,7 @@
+from settings import ROOT_BASEDIR
 from GUI import Interface, start_interface
 from monitor import MonitorMaster
 from monitor_utils import get_websites
-
 
 def main(path):
     # Backend and GUI instantiation
@@ -26,4 +26,4 @@ def main(path):
 
 
 if __name__=='__main__':
-    main(path='websites.txt')
+    main(path=ROOT_BASEDIR+'/resources/conf/websites.txt')

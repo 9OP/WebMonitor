@@ -2,10 +2,14 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GLib, Gio, Pango, GdkPixbuf
 
+import os
+import threading
+
+from settings import ROOT_BASEDIR
 from database import MONITOR_METRICS
 from datetime import datetime
 from queue import Queue
-import threading
+
 
 
 class Interface(Gtk.Window):
@@ -13,7 +17,7 @@ class Interface(Gtk.Window):
         # Window
         Gtk.Window.__init__(self, **kwargs)
         self.set_default_size(1200, 450)
-        self.set_icon_from_file('media/cctv.png')
+        self.set_icon_from_file(ROOT_BASEDIR+'/resources/media/cctv.png')
 
         # HeaderBar
         self.header = Header()
@@ -72,13 +76,13 @@ class Header:
         self.timer = Gtk.Label(label=str(datetime.now().strftime('%H:%M:%S')))
 
         self.cctv_off = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                filename='media/cctv_off.png',
+                filename=ROOT_BASEDIR+'/resources/media/cctv_off.png',
                 width=40,
                 height=40,
                 preserve_aspect_ratio=True)
 
         self.cctv_on = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                filename='media/cctv_on.png',
+                filename=ROOT_BASEDIR+'/resources/media/cctv_on.png',
                 width=40,
                 height=40,
                 preserve_aspect_ratio=True)
