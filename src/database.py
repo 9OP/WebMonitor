@@ -106,7 +106,8 @@ class Database:
         # Return rounded kb size x
         formater2 = lambda x: str(round(x/1000, 2))+' Kb' if (x is not None) else None
 
-
+        # Return int(x) or 0 is x is None
+        formater3 = lambda x: int(x) if (x is not None) else 0
 
         # Rate of availability
         self._cursor.execute('''

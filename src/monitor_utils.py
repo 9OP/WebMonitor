@@ -32,14 +32,16 @@ def _monitor_website(website):
     try:
         r = requests.get(website)
     except ConnectionError:
-        data[MONITOR_SCHEMA[2]] = False
+        data[MONITOR_SCHEMA[2]] = False # not available cannot connect to website
     else:
-        data[MONITOR_SCHEMA[2]] = True # available
+        if r.status_code==200: # Available only if http return code is 200
+            data[MONITOR_SCHEMA[2]] = True # available
+        else:
+            data[MONITOR_SCHEMA[2]] = False # not available (return code != 200)
         data[MONITOR_SCHEMA[3]] = r.elapsed.total_seconds() # response_time
         data[MONITOR_SCHEMA[4]] = r.status_code # status_code
         data[MONITOR_SCHEMA[5]] = len(r.content) # size
         data[MONITOR_SCHEMA[6]] = r.headers['Content-type'] # content
-
     finally:
         return data
 

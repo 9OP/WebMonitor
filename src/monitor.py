@@ -55,34 +55,42 @@ class MonitorConsumer:
         self.websites = websites
         self.sched = []
         self.alert = []
-        self.recover = []
 
     def _collector(self, interval, website, type):
-        ''' Collect data from project database
+        ''' Collect data from database
             and compute metrics.
         :param interval: look back interval (in seconds)
         :param website: website http addresse
         '''
         metrics = _monitor_collect(interval, website)
+        self._update_system(type, metrics, website)
 
+    def _update_system(self, type, metrics, website):
+        ''' Update/Alert/Recover system
+            Send update or message to front.
+        :param type: watcher or 10min or 1hour
+        :param metrics: metrics
+        '''
         # mon='10min' is top treeview, mon='1hour' is bottom treeview
         if type in ('10min', '1hour'):
             self.update(metrics=metrics, mon=type)
             return 0
-
-        if type=='watcher' and metrics[0]:
+        if type=='watcher' and metrics[0]!=None:
             date = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
-            if metrics[0] < 80 and website not in self.alert:
+            if int(metrics[0]) < 80 and website not in self.alert:
                 msg = ' Alert! website: '+website
                 self.send(type='alert', message=date+msg)
                 self.alert.append(website)
                 return 1
-            if metrics[0] > 80:
+            if int(metrics[0]) > 80:
                 if website in self.alert:
                     msg = ' Recover! website: '+website+' is recovering'
                     self.send(type='recover', message=date+msg)
                     self.alert.remove(website)
                     return 2
+
+        return 'PROBLEME'
+
 
     def start_consuming(self):
         ''' Start consuming process...
@@ -141,3 +149,11 @@ class MonitorMaster:
     def connect_to_GUI(self, update, send):
         self._consumer.update = update
         self._consumer.send = send
+
+
+'''
+2 entretiens : 1  junior consuktant 1h30 + (samuel benarouche) => regarder site sujet de stage: selection de 3 sujets
+attentes: la posture du consultant, discours structuré, capacité de prise de recul, retour exp, + preparer des questions
+revoir les 3 practices.
+etude de cas sur sujet de stage avec manager senior + challenger l etude de cas + fb de 1er entretiens
+'''

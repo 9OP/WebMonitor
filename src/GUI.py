@@ -25,15 +25,16 @@ class Interface(Gtk.Window):
         # Pack
         self.add(self.main_frame.get_top_level_widget())
 
-
     def on_monitor_button_toggled(self, button):
         date = str(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         if button.get_active():
+            self.header.image.set_from_pixbuf(self.header.cctv_on)
             self.header.spinner.start()
             self.send_message('info', date+' Start monitoring...')
             self.start_monitoring()
             self.header.monitor_button.set_label("Stop monitoring...")
         else:
+            self.header.image.set_from_pixbuf(self.header.cctv_off)
             self.header.spinner.stop()
             self.send_message('info', date+' Stop monitoring...')
             self.stop_monitoring()
@@ -69,12 +70,19 @@ class Header:
         self.spinner = Gtk.Spinner()
         self.timer = Gtk.Label(label=str(datetime.now().strftime('%H:%M:%S')))
 
-        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                filename='media/cctv.png',
+        self.cctv_off = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                filename='media/cctv_off.png',
                 width=40,
                 height=40,
                 preserve_aspect_ratio=True)
-        self.image = Gtk.Image.new_from_pixbuf(pixbuf)
+
+        self.cctv_on = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+                filename='media/cctv_on.png',
+                width=40,
+                height=40,
+                preserve_aspect_ratio=True)
+
+        self.image = Gtk.Image.new_from_pixbuf(self.cctv_off)
 
         self.monitor_button = Gtk.ToggleButton(label="Start monitoring...")
         self.monitor_button.set_active(False)
