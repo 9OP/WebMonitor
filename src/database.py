@@ -3,7 +3,7 @@ import os.path
 from sqlite3 import Error
 
 
-DB = 'monitor_SQLite.db'
+DB = 'webmonitor_SQLite.db'
 MONITOR_SCHEMA = ['website',
                   'date',
                   'available',

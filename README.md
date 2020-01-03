@@ -13,9 +13,9 @@ https://example3.com, check_interval3
 ### Installation
 
 [LINUX]
-- Download repo, ``` $ git clone https://github.com/9OP/WebMonitor```
+- Download repo, ``` $ git clone https://github.com/9OP/WebMonitor ```
 - Run install script, ``` $ sh install.sh ```
-- Launch, ``` $ ./WebMonitor/webmonitor.sh ```
+- Launch, ``` $ webmonitor ```, the launch icon should be available in the explorer
 
 
 **To do:**

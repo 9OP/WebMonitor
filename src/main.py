@@ -1,4 +1,4 @@
-from settings import ROOT_BASEDIR
+from settings import BASEDIR
 from GUI import Interface, start_interface
 from monitor import MonitorMaster
 from monitor_utils import get_websites
@@ -26,4 +26,4 @@ def main(path):
 
 
 if __name__=='__main__':
-    main(path=ROOT_BASEDIR+'/resources/conf/websites.txt')
+    main(path=BASEDIR+'/resources/conf/websites.txt')
