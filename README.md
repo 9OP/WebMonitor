@@ -15,7 +15,6 @@ https://example3.com, check_interval3
 WebMonitor relies on Schedulers and thread and is based on a Producer-Consumer
 design pattern.
 
-<img src='media/example.png'>
 
 **To do:**
 - [X] Schedulers and MonitorMaster
@@ -26,8 +25,6 @@ design pattern.
 
 ### Installation
 
-If you run it on a Linux machine, you might be able to skip 2), if you run it on Windows... well you clearly lose yourself and should be here in the first place. (Windows doesn't like GTK lib so good luck...)
-
 **Steps:**
 - 1) download the repo, ``` $ git clone https://github.com/9OP/WebMonitor```
 - 2) install the dependancies, ``` $ pip3 install -r requirements.txt```
@@ -35,7 +32,7 @@ If you run it on a Linux machine, you might be able to skip 2), if you run it on
 
 ### Improvement
 Overall I think the **design is pretty strong.**:
-- **MVC architecture**, the GUI, MonitorMaster, and DB are cleanly separated. 
+- **MVC architecture**, the GUI, MonitorMaster, and DB are cleanly separated.
 - **Schedulers**, launch threads with a certain frequence
 - **SQLite DB and Database class interface**, enable persistence of monitoring
 
@@ -43,9 +40,9 @@ Some improvement on the GUI are possible, designing an UI is a very difficult ta
 
 Also some parameters are hardcoded and not availble to the user (for instance look back perdiod and update intervals for the Schedulers).
 
-**Concerns and Warnings:** 
+**Concerns and Warnings:**
 
-SQLite dabatase doesnt not handle well multi connection writting, this is possible that while running the database stop connection and lock itsel. One improvement would be to use MUTEX (threading Lock) to make sure no Schedulers are writting at the same time. This is clearly is small change on the code (pass a lock variable to Schedulers, lock and unlock db when writting). I did not do it for several reasons: 
-- keep code simple (ideas are more important), 
-- this is a small projects no need to try hard, 
+SQLite dabatase doesnt not handle well multi connection writting, this is possible that while running the database stop connection and lock itsel. One improvement would be to use MUTEX (threading Lock) to make sure no Schedulers are writting at the same time. This is clearly is small change on the code (pass a lock variable to Schedulers, lock and unlock db when writting). I did not do it for several reasons:
+- keep code simple (ideas are more important),
+- this is a small projects no need to try hard,
 - If we move to another db engine, the lock will be useless, this is mostly a SQLite limitations (every proper db engine supports concurrent access in R/W).

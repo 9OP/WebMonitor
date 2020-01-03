@@ -1,4 +1,0 @@
-#!/bin/sh
-
-#happy coding makes me happy :) please take me at DataDog!!
-python3 src/main.py $1

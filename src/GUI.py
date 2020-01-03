@@ -12,7 +12,7 @@ class Interface(Gtk.Window):
         # Window
         Gtk.Window.__init__(self, **kwargs)
         self.set_default_size(1200, 450)
-        self.set_icon_from_file('media/icon.png')
+        self.set_icon_from_file('media/cctv.png')
 
         # HeaderBar
         self.header = Header()
@@ -70,21 +70,20 @@ class Header:
         self.timer = Gtk.Label(label=str(datetime.now().strftime('%H:%M:%S')))
 
         pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
-                filename='media/header_icon.png',
-                width=150,
-                height=150,
+                filename='media/cctv.png',
+                width=40,
+                height=40,
                 preserve_aspect_ratio=True)
         self.image = Gtk.Image.new_from_pixbuf(pixbuf)
 
         self.monitor_button = Gtk.ToggleButton(label="Start monitoring...")
-        # self.monitor_button.connect("toggled", self.on_monitor_button_toggled)
         self.monitor_button.set_active(False)
         self.monitor_button.set_size_request(width=200, height=20)
 
         self.headerbar = Gtk.HeaderBar()
         self.headerbar.set_show_close_button(True)
         self.headerbar.props.title = 'Web Monitor'
-        self.headerbar.props.subtitle = 'DataDog take home project - Martin GUYARD'
+        self.headerbar.props.subtitle = '9OP - websites monitoring'
         self.headerbar.pack_start(self.spinner)
         self.headerbar.pack_start(self.monitor_button)
         self.headerbar.pack_start(self.image)

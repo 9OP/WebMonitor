@@ -2,16 +2,6 @@ from GUI import Interface, start_interface
 from monitor import MonitorMaster
 from monitor_utils import get_websites
 
-import argparse
-
-
-def arg():
-    parser = argparse.ArgumentParser(description='DataDog take home web monitoring project')
-    parser.add_argument('--path', type=str, default='websites.txt',
-                        help='path to websites.txt (http://example.com, 10)')
-    args = parser.parse_args()
-    return args
-
 
 def main(path):
     # Backend and GUI instantiation
@@ -34,6 +24,6 @@ def main(path):
     # Start GUI
     start_interface(monGUI)
 
+
 if __name__=='__main__':
-    path = arg().path
-    main(path=path)
+    main(path='websites.txt')

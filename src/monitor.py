@@ -90,11 +90,11 @@ class MonitorConsumer:
         '''
         for website in self.websites:
             # every 10 seconds, check for the last 600 seconds
-            sched_10min = Scheduler(10, self._collector, 10*60, website, '10min')
+            sched_10min = Scheduler(5, self._collector, 10*60, website, '10min')
             # every 60 seconds, check for the last 3600 seconds
-            sched_1hour = Scheduler(60, self._collector, 60*60, website, '1hour')
+            sched_1hour = Scheduler(10, self._collector, 60*60, website, '1hour')
             # Watch for alert and recover, protect us from the darkness...
-            sched_watcher = Scheduler(20, self._collector, 120, website, 'watcher')
+            sched_watcher = Scheduler(10, self._collector, 120, website, 'watcher')
 
             sched_10min.start()
             sched_1hour.start()
