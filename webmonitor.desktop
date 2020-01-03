@@ -1,8 +1,10 @@
+
 [Desktop Entry]
 Version=1.0
 Name=WebMonitor
-Icon=
-Exec=
+Icon=/home/siamang/Bureau/WebMonitor/resources/media/cctv.png
+Exec=/home/siamang/Bureau/WebMonitor/webmonitor
 Terminal=false
 Type=Application
 Categories=Utility;Application;
+
