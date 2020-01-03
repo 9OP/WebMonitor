@@ -16,7 +16,7 @@ python3 -m venv ${BASEDIR}/venv/
 ${BASEDIR}/venv/bin/pip3 install -r ${BASEDIR}/resources/conf/requirements.txt
 
 # ADD app to $PATH
-PATH=$PATH:${BASEDIR}
+# source ${BASEDIR}/resources/conf/exportpath.sh ${BASEDIR}
 
 echo "
 [Desktop Entry]
@@ -27,7 +27,7 @@ Exec=${BASEDIR}/webmonitor
 Terminal=false
 Type=Application
 Categories=Utility;Application;
-" > webmonitor.desktop
+" > ${BASEDIR}/webmonitor.desktop
 
 # ADD webmonitor.desktop to /usr/share/applications/
 sudo cp ${BASEDIR}/webmonitor.desktop /usr/share/applications
