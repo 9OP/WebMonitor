@@ -10,12 +10,13 @@ https://example2.com, check_interval2
 https://example3.com, check_interval3
 ```
 
+![Image of WebMonitor](https://github.com/9OP/WebMonitor/blob/master/resources/media/webmonitor.png)
+
 ### Installation
 
 [LINUX]
 - Download repo, ``` $ git clone https://github.com/9OP/WebMonitor ```
 - Run install script, ``` $ sh install.sh ```
-- Export path, ``` $ source exportpath.sh ```
 - Launch, ``` $ webmonitor ```, the launch icon should be available in the explorer
 
 
